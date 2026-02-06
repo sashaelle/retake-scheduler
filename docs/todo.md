@@ -1,4 +1,4 @@
 - set up project scaffold
 - create retake session model
-- implement slot capacity loic
+- implement slot capacity logic
 - deploy initial prototype
