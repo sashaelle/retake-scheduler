@@ -1,4 +1,5 @@
 import Link from "next/link";
+import BookingForm from "@/components/BookingForm";
 
 const DEPARTMENTS = [
   { key: "cs", name: "Computer Science" },
@@ -7,6 +8,16 @@ const DEPARTMENTS = [
 ];
 
 export default function DevDashboard() {
+  const demoSlot = {
+    slotId: "demo-slot-1",
+    departmentSlug: "cs",
+    departmentName: "Computer Science",
+    dateLabel: "Mon Feb 10",
+    timeLabel: "11:00 AM – 2:00 PM",
+    locationLabel: "Room 214",
+    requireCourseInfo: true, // set false if you don’t want course/prof required
+  };
+
   return (
     <main style={{ padding: 20, fontFamily: "system-ui" }}>
       <h1>Developer Dashboard</h1>
@@ -44,6 +55,17 @@ export default function DevDashboard() {
       <p style={{ marginTop: 18, opacity: 0.8 }}>
         To add departments later, edit the <code>DEPARTMENTS</code> list in this file.
       </p>
+
+      {/* Booking Form Test */}
+      <div style={{ marginTop: 28, maxWidth: 720 }}>
+        <h2 style={{ fontSize: 20, fontWeight: 700 }}>Booking Form Test</h2>
+        <p style={{ opacity: 0.8 }}>
+          This is wired to <code>/api/bookings</code>.
+        </p>
+        <div style={{ marginTop: 12 }}>
+          <BookingForm slot={demoSlot} />
+        </div>
+      </div>
     </main>
   );
 }
