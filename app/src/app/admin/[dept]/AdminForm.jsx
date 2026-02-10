@@ -1,39 +1,73 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function AdminForm({ dept }) {
   const [sessionName, setSessionName] = useState("");
   const [date, setDate] = useState("");
   const [capacity, setCapacity] = useState(1);
   const [times, setTimes] = useState("09:00, 09:15, 09:30");
+
   const [sessions, setSessions] = useState([]);
+  const [status, setStatus] = useState("");
 
-  function handleSubmit(e) {
+  async function loadSessions() {
+    setStatus("Loading sessions...");
+    try {
+      const res = await fetch(`/api/data?dept=${encodeURIComponent(dept)}`);
+      const data = await res.json();
+      setSessions(data.sessions || []);
+      setStatus("");
+    } catch {
+      setStatus("Failed to load sessions.");
+    }
+  }
+
+  useEffect(() => {
+    loadSessions();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dept]);
+
+  async function handleSubmit(e) {
     e.preventDefault();
+    setStatus("Saving...");
 
-    // turn "09:00, 09:15" into ["09:00","09:15"]
     const slotTimes = times
       .split(",")
       .map((t) => t.trim())
       .filter(Boolean);
 
-    const newSession = {
-      id: crypto.randomUUID(),
+    const payload = {
       dept,
       sessionName,
       date,
       capacity: Number(capacity),
-      slots: slotTimes.map((t) => ({
-        time: t,
-        remaining: Number(capacity),
-      })),
+      times: slotTimes,
     };
 
-    setSessions((prev) => [newSession, ...prev]);
+    try {
+      const res = await fetch("/api/data", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
 
-    // optional: clear a couple fields after submit
-    setSessionName("");
+      const data = await res.json();
+
+      if (!res.ok) {
+        setStatus(`Error: ${data.error || "Unknown error"}`);
+        return;
+      }
+
+      setStatus("Saved!");
+      setSessionName("");
+      // keep date/times/capacity as convenience, or clear if you want
+
+      // Reload from the JSON store so what you see is what’s persisted
+      await loadSessions();
+    } catch {
+      setStatus("Network/server error while saving.");
+    }
   }
 
   return (
@@ -93,11 +127,12 @@ export default function AdminForm({ dept }) {
         </div>
 
         <button type="submit">Create Session</button>
+        <span style={{ marginLeft: 10 }}>{status}</span>
       </form>
 
       <hr style={{ margin: "16px 0" }} />
 
-      <h3>Created sessions (in-memory)</h3>
+      <h3>Saved sessions (from JSON store)</h3>
       {sessions.length === 0 ? (
         <p>No sessions yet.</p>
       ) : (
