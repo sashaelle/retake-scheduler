@@ -31,7 +31,8 @@ export default async function RetakePage({ params }) {
         {/* Render each time slot */}
         {/* .map() creates the <li> of elements */}
         {/* key helps React track list items efficiently */}
-        {slots.map((slot) => ( {/* For each slot...*/}
+        {/* For each slot...*/}
+        {slots.map((slot) => ( 
           <li key={slot.id} style={{ marginBottom: 8 }}> {/* Render 1 list item */}
                           {/* condition       ?          valueIfTrue     : valueIfFalse */}
             {slot.time} — {slot.remaining > 0 ? `${slot.remaining} left` : "FULL"}
