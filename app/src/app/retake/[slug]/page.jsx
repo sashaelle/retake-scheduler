@@ -39,8 +39,8 @@ export default async function RetakePage({ params }) {
             <button disabled={slot.remaining === 0} style={{ marginLeft: 8 }}> {/* Disable button if there are no slots remaining */}
               Book
             </button>
-          </li> {/* Ends one list item */}
-        ))}
+          </li>
+        ))}  {/* Ends one list item */}
       </ul> {/* End of unordered list */}
     </main>
   );
