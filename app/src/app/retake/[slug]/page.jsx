@@ -30,8 +30,8 @@ export default async function RetakePage({ params }) {
       <ul> {/* ul = "unordered list" ; makes list*/}
         {/* Render each time slot */}
         {/* .map() creates the <li> of elements */}
+        {/* key helps React track list items efficiently */}
         {slots.map((slot) => ( {/* For each slot...*/}
-              {/* key helps React track list items efficiently */}
           <li key={slot.id} style={{ marginBottom: 8 }}> {/* Render 1 list item */}
                           {/* condition       ?          valueIfTrue     : valueIfFalse */}
             {slot.time} — {slot.remaining > 0 ? `${slot.remaining} left` : "FULL"}
