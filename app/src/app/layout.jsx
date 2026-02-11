@@ -1,3 +1,5 @@
+import "./global.css";
+
 export const metadata = {
   title: "Retake Scheduler",
   description: "Capacity-aware exam retake scheduling prototype",

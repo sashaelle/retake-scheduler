@@ -1,3 +1,7 @@
+/* ===========================
+   Booking Form (Prototype 1)
+   =========================== */
+
 .bf-card{
   border: 1px solid #ddd;
   border-radius: 16px;
@@ -53,6 +57,158 @@
 .bf-msg{ margin-top: 10px; font-size: 14px; opacity: .85; }
 
 .section{ margin-bottom: 16px; }
+
+
+/* ===========================
+   Dev Dashboard (Prototype 1)
+   =========================== */
+
+.dev-shell{
+  padding: 20px;
+  max-width: 1100px;
+  margin: 0 auto;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+
+.dev-title{ margin: 0 0 6px; }
+.dev-subtitle{ margin: 0 0 14px; opacity: .75; }
+
+.dev-toolbar{
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+  border: 1px solid #ddd;
+  border-radius: 14px;
+  padding: 12px;
+  background: #fff;
+}
+
+.dev-field{ display: flex; gap: 8px; align-items: center; }
+.dev-label{ opacity: .8; font-size: 14px; }
+
+.dev-select{
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  background: #fff;
+}
+
+.dev-msg{ opacity: .75; }
+
+.dev-grid{
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.dev-card{
+  border: 1px solid #ddd;
+  border-radius: 14px;
+  padding: 14px;
+  background: #fff;
+  min-height: 200px;
+}
+
+.dev-h2{ margin: 0 0 10px; }
+
+.dev-muted{ opacity: .75; }
+
+.dev-stack{
+  display: grid;
+  gap: 12px;
+}
+
+.dev-session{
+  border: 1px solid #eee;
+  border-radius: 14px;
+  padding: 12px;
+}
+
+.dev-sessionHeader{
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.dev-sessionTitle{ font-weight: 700; }
+.dev-sessionMeta{ opacity: .8; font-size: 13px; }
+
+.dev-slots{
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px;
+}
+
+.dev-slotCard{
+  border: 1px solid #eee;
+  border-radius: 14px;
+  padding: 10px;
+  display: grid;
+  gap: 8px;
+}
+
+.dev-slotTop{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.dev-slotMeta{ opacity: .8; font-size: 13px; }
+
+.dev-selectedRow{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.dev-selectedText{
+  opacity: .85;
+  font-size: 13px;
+}
+
+.dev-actions{
+  margin-top: 10px;
+}
+
+/* Buttons */
+.dev-btn{
+  padding: 9px 12px;
+  border-radius: 12px;
+  border: 1px solid #ccc;
+  background: #f7f7f7;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.dev-btnPrimary{
+  border-color: #111;
+  background: #111;
+  color: #fff;
+}
+
+.dev-btnGhost{
+  background: #f7f7f7;
+  color: #111;
+}
+
+.dev-btn:disabled,
+.dev-btnDisabled{
+  opacity: .6;
+  cursor: not-allowed;
+}
+
+/* Different media type/styles */
+
+@media (max-width: 900px){
+  .dev-grid{ grid-template-columns: 1fr; }
+}
 
 @media (max-width: 760px){
   .bf-grid{ grid-template-columns: 1fr; }

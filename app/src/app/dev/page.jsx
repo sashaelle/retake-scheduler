@@ -10,8 +10,6 @@ const DEPARTMENTS = [
 ];
 
 function toTimeLabel(t) {
-  // t like "11:00" or "09:15"
-  // Keep it simple for prototype: show as-is
   return t;
 }
 
@@ -24,8 +22,11 @@ export default function DevDashboard() {
 
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState("");
-  const [data, setData] = useState(null); // { dept, sessions }
-  const [selected, setSelected] = useState(null); // slot object for BookingForm
+  const [data, setData] = useState(null);
+  const [selected, setSelected] = useState(null);
+
+  // dev-only helpers
+  const [showJson, setShowJson] = useState(false);
 
   async function load() {
     setLoading(true);
@@ -56,7 +57,6 @@ export default function DevDashboard() {
     setMsg("");
     setSelected(null);
 
-    // Simple demo values (change anytime)
     const now = new Date();
     const yyyy = now.getFullYear();
     const mm = String(now.getMonth() + 1).padStart(2, "0");
@@ -92,7 +92,16 @@ export default function DevDashboard() {
     }
   }
 
-  // Auto-load once on first render (optional)
+  async function copyJson() {
+    try {
+      const pretty = JSON.stringify(data ?? {}, null, 2);
+      await navigator.clipboard.writeText(pretty);
+      setMsg("Copied JSON to clipboard ✅");
+    } catch {
+      setMsg("Could not copy JSON (clipboard blocked).");
+    }
+  }
+
   useEffect(() => {
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -100,31 +109,24 @@ export default function DevDashboard() {
 
   const sessions = data?.sessions || [];
 
+  // Change these to your real routes:
+  const adminHref = "/admin";
+  const studentHref = `/dept/${dept}`; // example (edit to match your real student route)
+
   return (
-    <main style={{ padding: 20, fontFamily: "system-ui", maxWidth: 1100, margin: "0 auto" }}>
-      <h1 style={{ marginBottom: 6 }}>Prototype 1 — Dev Dashboard</h1>
-      <p style={{ marginTop: 0, opacity: 0.75 }}>
-        Controls for creating demo sessions, viewing slots, and booking.
+    <main className="dev-shell">
+      <h1 className="dev-title">Prototype 1 — Dev Dashboard</h1>
+      <p className="dev-subtitle">
+        Developer view (debug + quick navigation). Business logic handled by Java backend.
       </p>
 
-      <div
-        style={{
-          display: "flex",
-          gap: 12,
-          alignItems: "center",
-          flexWrap: "wrap",
-          border: "1px solid #ddd",
-          borderRadius: 12,
-          padding: 12,
-          background: "#fff",
-        }}
-      >
-        <label style={{ display: "flex", gap: 8, alignItems: "center" }}>
-          <span style={{ opacity: 0.8 }}>Department</span>
+      <div className="dev-toolbar">
+        <label className="dev-field">
+          <span className="dev-label">Department</span>
           <select
             value={dept}
             onChange={(e) => setDept(e.target.value)}
-            style={{ padding: "8px 10px", borderRadius: 10, border: "1px solid #ccc" }}
+            className="dev-select"
             disabled={loading}
           >
             {DEPARTMENTS.map((d) => (
@@ -135,94 +137,124 @@ export default function DevDashboard() {
           </select>
         </label>
 
-        <button
-          onClick={load}
-          disabled={loading}
-          style={{
-            padding: "9px 12px",
-            borderRadius: 10,
-            border: "1px solid #111",
-            background: "#111",
-            color: "#fff",
-            cursor: "pointer",
-            opacity: loading ? 0.6 : 1,
-          }}
-        >
+        <button onClick={load} disabled={loading} className="dev-btn dev-btnPrimary">
           {loading ? "Working…" : "Load data"}
         </button>
 
-        <button
-          onClick={createDemoSession}
-          disabled={loading}
-          style={{
-            padding: "9px 12px",
-            borderRadius: 10,
-            border: "1px solid #ccc",
-            background: "#f7f7f7",
-            cursor: "pointer",
-            opacity: loading ? 0.6 : 1,
-          }}
-        >
+        <button onClick={createDemoSession} disabled={loading} className="dev-btn dev-btnGhost">
           Create demo session
         </button>
 
-        <span style={{ opacity: 0.75 }}>{msg}</span>
+        <button
+          type="button"
+          onClick={() => setShowJson((v) => !v)}
+          className="dev-btn dev-btnGhost"
+        >
+          {showJson ? "Hide JSON" : "Show JSON"}
+        </button>
+
+        <a className="dev-btn dev-btnGhost" href={adminHref}>
+          Open Admin page
+        </a>
+
+        <a className="dev-btn dev-btnGhost" href={studentHref}>
+          Open Student page
+        </a>
+
+        <span className="dev-msg">{msg}</span>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1.1fr 0.9fr", gap: 16, marginTop: 16 }}>
-        {/* LEFT: Sessions + Slots */}
-        <section
-          style={{
-            border: "1px solid #ddd",
-            borderRadius: 12,
-            padding: 14,
-            background: "#fff",
-            minHeight: 200,
-          }}
-        >
-          <h2 style={{ marginTop: 0 }}>Slots ({deptName})</h2>
+      {/* Raw JSON Viewer */}
+      {showJson && (
+        <section className="dev-card" style={{ marginTop: 16 }}>
+          <div className="dev-sessionHeader">
+            <h2 className="dev-h2" style={{ margin: 0 }}>
+              Raw JSON (dept: {dept})
+            </h2>
+
+            <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+              <button onClick={copyJson} className="dev-btn dev-btnGhost" disabled={!data}>
+                Copy JSON
+              </button>
+
+              <button
+                onClick={() => {
+                  // quick “download” without server
+                  const pretty = JSON.stringify(data ?? {}, null, 2);
+                  const blob = new Blob([pretty], { type: "application/json" });
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement("a");
+                  a.href = url;
+                  a.download = `dept-${dept}-data.json`;
+                  a.click();
+                  URL.revokeObjectURL(url);
+                }}
+                className="dev-btn dev-btnGhost"
+                disabled={!data}
+              >
+                Download JSON
+              </button>
+            </div>
+          </div>
+
+          <pre
+            style={{
+              marginTop: 10,
+              padding: 12,
+              borderRadius: 12,
+              border: "1px solid #eee",
+              background: "#fafafa",
+              overflowX: "auto",
+              maxHeight: 360,
+            }}
+          >
+            {JSON.stringify(data ?? {}, null, 2)}
+          </pre>
+        </section>
+      )}
+
+      <div className="dev-grid">
+        <section className="dev-card">
+          <h2 className="dev-h2">Slots ({deptName})</h2>
 
           {sessions.length === 0 ? (
-            <p style={{ opacity: 0.75 }}>
+            <p className="dev-muted">
               No sessions yet. Click <strong>Create demo session</strong>.
             </p>
           ) : (
-            <div style={{ display: "grid", gap: 12 }}>
+            <div className="dev-stack">
               {sessions.map((s) => (
-                <div key={s.id} style={{ border: "1px solid #eee", borderRadius: 12, padding: 12 }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", gap: 10, flexWrap: "wrap" }}>
+                <div key={s.id} className="dev-session">
+                  <div className="dev-sessionHeader">
                     <div>
-                      <div style={{ fontWeight: 700 }}>{s.sessionName}</div>
-                      <div style={{ opacity: 0.8, fontSize: 13 }}>{s.date}</div>
+                      <div className="dev-sessionTitle">{s.sessionName}</div>
+                      <div className="dev-sessionMeta">{s.date}</div>
                     </div>
-                    <div style={{ opacity: 0.75, fontSize: 13 }}>
+                    <div className="dev-sessionMeta">
                       capacity: <strong>{s.capacity}</strong>
                     </div>
                   </div>
 
-                  <div style={{ marginTop: 10, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 10 }}>
+                  <div className="dev-slots">
                     {(s.slots || []).map((slot) => {
                       const remaining = Number(slot.remaining ?? 0);
                       const disabled = remaining <= 0;
 
                       const slotForForm = {
-                        slotId: slot.id, // IMPORTANT: Java provides slot.id
+                        slotId: slot.id,
                         departmentSlug: dept,
                         departmentName: deptName,
                         dateLabel: s.date,
                         timeLabel: toTimeLabel(slot.time),
                         locationLabel: "TBD (Prototype 1)",
-                        requireCourseInfo: true, // change to false if you don't want course/prof required
+                        requireCourseInfo: true,
                       };
 
                       return (
-                        <div
-                          key={slot.id || `${s.id}:${slot.time}`}
-                          style={{ border: "1px solid #eee", borderRadius: 12, padding: 10, display: "grid", gap: 6 }}
-                        >
-                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                        <div key={slot.id} className="dev-slotCard">
+                          <div className="dev-slotTop">
                             <strong>{slot.time}</strong>
-                            <span style={{ opacity: 0.8, fontSize: 13 }}>
+                            <span className="dev-slotMeta">
                               remaining: <strong>{remaining}</strong>
                             </span>
                           </div>
@@ -230,15 +262,7 @@ export default function DevDashboard() {
                           <button
                             onClick={() => setSelected(slotForForm)}
                             disabled={disabled}
-                            style={{
-                              padding: "8px 10px",
-                              borderRadius: 10,
-                              border: "1px solid #111",
-                              background: disabled ? "#eee" : "#111",
-                              color: disabled ? "#666" : "#fff",
-                              cursor: disabled ? "not-allowed" : "pointer",
-                              opacity: disabled ? 0.8 : 1,
-                            }}
+                            className={"dev-btn dev-btnPrimary " + (disabled ? "dev-btnDisabled" : "")}
                           >
                             {disabled ? "Full" : "Book this slot"}
                           </button>
@@ -252,52 +276,28 @@ export default function DevDashboard() {
           )}
         </section>
 
-        {/* RIGHT: Booking Form */}
-        <section
-          style={{
-            border: "1px solid #ddd",
-            borderRadius: 12,
-            padding: 14,
-            background: "#fff",
-          }}
-        >
-          <h2 style={{ marginTop: 0 }}>Booking</h2>
+        <section className="dev-card">
+          <h2 className="dev-h2">Booking</h2>
+
           {!selected ? (
-            <p style={{ opacity: 0.75 }}>Click “Book this slot” on the left to open the form.</p>
+            <p className="dev-muted">Click “Book this slot” on the left to open the form.</p>
           ) : (
             <>
-              <div style={{ marginBottom: 10, display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10 }}>
-                <div style={{ opacity: 0.8, fontSize: 13 }}>
-                  Selected: <strong>{selected.dateLabel}</strong> • <strong>{selected.timeLabel}</strong>
+              <div className="dev-selectedRow">
+                <div className="dev-selectedText">
+                  Selected: <strong>{selected.dateLabel}</strong> •{" "}
+                  <strong>{selected.timeLabel}</strong>
                 </div>
-                <button
-                  onClick={() => setSelected(null)}
-                  style={{
-                    padding: "6px 10px",
-                    borderRadius: 10,
-                    border: "1px solid #ccc",
-                    background: "#f7f7f7",
-                    cursor: "pointer",
-                  }}
-                >
+
+                <button onClick={() => setSelected(null)} className="dev-btn dev-btnGhost">
                   Close
                 </button>
               </div>
 
               <BookingForm slot={selected} />
-              <div style={{ marginTop: 10 }}>
-                <button
-                  onClick={load}
-                  disabled={loading}
-                  style={{
-                    padding: "8px 10px",
-                    borderRadius: 10,
-                    border: "1px solid #ccc",
-                    background: "#f7f7f7",
-                    cursor: "pointer",
-                    opacity: loading ? 0.6 : 1,
-                  }}
-                >
+
+              <div className="dev-actions">
+                <button onClick={load} disabled={loading} className="dev-btn dev-btnGhost">
                   Refresh slots
                 </button>
               </div>
