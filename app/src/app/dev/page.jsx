@@ -1,7 +1,11 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+<<<<<<< HEAD
 import BookingForm from "@/app/components/BookingForm";
+=======
+import BookingForm from "@/components/BookingForm";
+>>>>>>> e15d1d15173404c82566796cd241e5ceea57dc44
 
 const DEPARTMENTS = [
   { key: "cs", name: "Computer Science" },
