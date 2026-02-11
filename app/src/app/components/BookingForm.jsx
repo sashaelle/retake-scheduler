@@ -43,10 +43,18 @@ export default function BookingForm({ slot }) {
       <p>Confirm your details below.</p>
     </div>
 
+    <div className="section">
+      ...
+    </div>
+
     <div className="bf-summary">
       <div><span>Department:</span> <strong>{slot.departmentName}</strong></div>
       <div><span>When:</span> <strong>{slot.dateLabel} • {slot.timeLabel}</strong></div>
       <div><span>Where:</span> <strong>{slot.locationLabel}</strong></div>
+    </div>
+
+    <div className="section">
+      ...
     </div>
 
     <div className="bf-grid">
@@ -55,15 +63,27 @@ export default function BookingForm({ slot }) {
         <input name="name" required autoComplete="name" />
       </label>
 
+    <div className="section">
+      ...
+    </div>
+
       <label className="bf-field">
         <span>Email *</span>
         <input name="email" type="email" required autoComplete="email" />
       </label>
 
+    <div className="section">
+      ...
+    </div>
+
       <label className="bf-field">
         <span>Student ID (optional)</span>
         <input name="studentId" />
       </label>
+
+    <div className="section">
+      ...
+    </div>
 
       <label className="bf-field">
         <span>Course code {slot.requireCourseInfo ? "*" : "(optional)"}</span>
@@ -74,6 +94,10 @@ export default function BookingForm({ slot }) {
         />
       </label>
 
+    <div className="section">
+      ...
+    </div>
+
       <label className="bf-field">
         <span>Instructor {slot.requireCourseInfo ? "*" : "(optional)"}</span>
         <input
@@ -82,6 +106,10 @@ export default function BookingForm({ slot }) {
           required={!!slot.requireCourseInfo}
         />
       </label>
+
+    <div className="section">
+      ...
+    </div>
 
       <label className="bf-field bf-notes">
         <span>Notes (optional)</span>
