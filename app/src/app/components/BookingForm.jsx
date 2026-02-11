@@ -37,80 +37,64 @@ export default function BookingForm({ slot }) {
   }
 
   return (
-    <form onSubmit={onSubmit} className="rounded-2xl border p-5 space-y-4">
-      <div>
-        <h2 className="text-xl font-semibold">Book Appointment</h2>
-        <p className="opacity-70">Confirm your details below.</p>
-      </div>
+  <form onSubmit={onSubmit} className="bf-card">
+    <div className="bf-header">
+      <h2>Book Appointment</h2>
+      <p>Confirm your details below.</p>
+    </div>
 
-      <div className="rounded-xl border p-4 space-y-1">
-        <div>
-          <span className="opacity-70">Department:</span> {slot.departmentName}
-        </div>
-        <div>
-          <span className="opacity-70">When:</span> {slot.dateLabel} •{" "}
-          {slot.timeLabel}
-        </div>
-        <div>
-          <span className="opacity-70">Where:</span> {slot.locationLabel}
-        </div>
-      </div>
+    <div className="bf-summary">
+      <div><span>Department:</span> <strong>{slot.departmentName}</strong></div>
+      <div><span>When:</span> <strong>{slot.dateLabel} • {slot.timeLabel}</strong></div>
+      <div><span>Where:</span> <strong>{slot.locationLabel}</strong></div>
+    </div>
 
-      <div className="grid gap-3">
-        <label className="grid gap-1">
-          <span className="text-sm opacity-80">Full name *</span>
-          <input name="name" required className="border rounded-xl p-2" autoComplete="name" />
-        </label>
+    <div className="bf-grid">
+      <label className="bf-field">
+        <span>Full name *</span>
+        <input name="name" required autoComplete="name" />
+      </label>
 
-        <label className="grid gap-1">
-          <span className="text-sm opacity-80">Email *</span>
-          <input name="email" type="email" required className="border rounded-xl p-2" autoComplete="email" />
-        </label>
+      <label className="bf-field">
+        <span>Email *</span>
+        <input name="email" type="email" required autoComplete="email" />
+      </label>
 
-        <label className="grid gap-1">
-          <span className="text-sm opacity-80">Student ID (optional)</span>
-          <input name="studentId" className="border rounded-xl p-2" />
-        </label>
+      <label className="bf-field">
+        <span>Student ID (optional)</span>
+        <input name="studentId" />
+      </label>
 
-        <label className="grid gap-1">
-          <span className="text-sm opacity-80">
-            Course code {slot.requireCourseInfo ? "*" : "(optional)"}
-          </span>
-          <input
-            name="courseCode"
-            className="border rounded-xl p-2"
-            placeholder="CS-360"
-            required={!!slot.requireCourseInfo}
-          />
-        </label>
+      <label className="bf-field">
+        <span>Course code {slot.requireCourseInfo ? "*" : "(optional)"}</span>
+        <input
+          name="courseCode"
+          placeholder="CS-360"
+          required={!!slot.requireCourseInfo}
+        />
+      </label>
 
-        <label className="grid gap-1">
-          <span className="text-sm opacity-80">
-            Instructor {slot.requireCourseInfo ? "*" : "(optional)"}
-          </span>
-          <input
-            name="instructor"
-            className="border rounded-xl p-2"
-            placeholder="Prof. Shimkanon"
-            required={!!slot.requireCourseInfo}
-          />
-        </label>
+      <label className="bf-field">
+        <span>Instructor {slot.requireCourseInfo ? "*" : "(optional)"}</span>
+        <input
+          name="instructor"
+          placeholder="Prof. Shimkanon"
+          required={!!slot.requireCourseInfo}
+        />
+      </label>
 
-        <label className="grid gap-1">
-          <span className="text-sm opacity-80">Notes (optional)</span>
-          <textarea name="notes" rows={4} className="border rounded-xl p-2" />
-        </label>
-      </div>
+      <label className="bf-field bf-notes">
+        <span>Notes (optional)</span>
+        <textarea name="notes" rows={4} />
+      </label>
+    </div>
 
-      <button
-        disabled={loading}
-        className="rounded-xl border px-4 py-2 font-semibold disabled:opacity-60"
-        type="submit"
-      >
-        {loading ? "Booking..." : "Confirm booking"}
-      </button>
+    <button className="bf-button" disabled={loading} type="submit">
+      {loading ? "Booking..." : "Confirm booking"}
+    </button>
 
-      {msg && <p className="text-sm opacity-80">{msg}</p>}
-    </form>
-  );
+    {msg && <p className="bf-msg">{msg}</p>}
+  </form>
+);
+
 }
