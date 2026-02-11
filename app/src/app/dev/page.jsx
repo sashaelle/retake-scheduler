@@ -17,7 +17,7 @@ export default function DevDashboard() {
   const [dept, setDept] = useState("cs");
   const deptName = useMemo(
     () => DEPARTMENTS.find((d) => d.key === dept)?.name || dept,
-    [dept]
+    [dept],
   );
 
   const [loading, setLoading] = useState(false);
@@ -117,7 +117,8 @@ export default function DevDashboard() {
     <main className="dev-shell">
       <h1 className="dev-title">Prototype 1 — Dev Dashboard</h1>
       <p className="dev-subtitle">
-        Developer view (debug + quick navigation). Business logic handled by Java backend.
+        Developer view (debug + quick navigation). Business logic handled by
+        Java backend.
       </p>
 
       <div className="dev-toolbar">
@@ -137,11 +138,19 @@ export default function DevDashboard() {
           </select>
         </label>
 
-        <button onClick={load} disabled={loading} className="dev-btn dev-btnPrimary">
+        <button
+          onClick={load}
+          disabled={loading}
+          className="dev-btn dev-btnPrimary"
+        >
           {loading ? "Working…" : "Load data"}
         </button>
 
-        <button onClick={createDemoSession} disabled={loading} className="dev-btn dev-btnGhost">
+        <button
+          onClick={createDemoSession}
+          disabled={loading}
+          className="dev-btn dev-btnGhost"
+        >
           Create demo session
         </button>
 
@@ -173,7 +182,11 @@ export default function DevDashboard() {
             </h2>
 
             <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-              <button onClick={copyJson} className="dev-btn dev-btnGhost" disabled={!data}>
+              <button
+                onClick={copyJson}
+                className="dev-btn dev-btnGhost"
+                disabled={!data}
+              >
                 Copy JSON
               </button>
 
@@ -262,7 +275,10 @@ export default function DevDashboard() {
                           <button
                             onClick={() => setSelected(slotForForm)}
                             disabled={disabled}
-                            className={"dev-btn dev-btnPrimary " + (disabled ? "dev-btnDisabled" : "")}
+                            className={
+                              "dev-btn dev-btnPrimary " +
+                              (disabled ? "dev-btnDisabled" : "")
+                            }
                           >
                             {disabled ? "Full" : "Book this slot"}
                           </button>
@@ -280,7 +296,9 @@ export default function DevDashboard() {
           <h2 className="dev-h2">Booking</h2>
 
           {!selected ? (
-            <p className="dev-muted">Click “Book this slot” on the left to open the form.</p>
+            <p className="dev-muted">
+              Click “Book this slot” on the left to open the form.
+            </p>
           ) : (
             <>
               <div className="dev-selectedRow">
@@ -289,7 +307,10 @@ export default function DevDashboard() {
                   <strong>{selected.timeLabel}</strong>
                 </div>
 
-                <button onClick={() => setSelected(null)} className="dev-btn dev-btnGhost">
+                <button
+                  onClick={() => setSelected(null)}
+                  className="dev-btn dev-btnGhost"
+                >
                   Close
                 </button>
               </div>
@@ -297,7 +318,11 @@ export default function DevDashboard() {
               <BookingForm slot={selected} />
 
               <div className="dev-actions">
-                <button onClick={load} disabled={loading} className="dev-btn dev-btnGhost">
+                <button
+                  onClick={load}
+                  disabled={loading}
+                  className="dev-btn dev-btnGhost"
+                >
                   Refresh slots
                 </button>
               </div>
