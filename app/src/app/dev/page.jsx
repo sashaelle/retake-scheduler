@@ -1,5 +1,5 @@
 import Link from "next/link";
-import BookingForm from "@/components/BookingForm";
+import BookingForm from "@/app/components/BookingForm.jsx";
 
 const DEPARTMENTS = [
   { key: "cs", name: "Computer Science" },
