@@ -52,6 +52,8 @@
 
 .bf-msg{ margin-top: 10px; font-size: 14px; opacity: .85; }
 
+.section{ margin-bottom: 16px; }
+
 @media (max-width: 760px){
   .bf-grid{ grid-template-columns: 1fr; }
 }
