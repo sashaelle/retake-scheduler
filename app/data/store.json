@@ -1,0 +1,67 @@
+{
+  "departments" : {
+    "cs" : {
+      "sessions" : [ {
+        "date" : "2026-02-10",
+        "slots" : [ {
+          "id" : "96663d39-05f9-4109-9373-f973fe142e6e:11:00",
+          "time" : "11:00",
+          "remaining" : 3
+        }, {
+          "id" : "96663d39-05f9-4109-9373-f973fe142e6e:11:15",
+          "time" : "11:15",
+          "remaining" : 3
+        }, {
+          "id" : "96663d39-05f9-4109-9373-f973fe142e6e:11:30",
+          "time" : "11:30",
+          "remaining" : 3
+        }, {
+          "id" : "96663d39-05f9-4109-9373-f973fe142e6e:11:45",
+          "time" : "11:45",
+          "remaining" : 3
+        } ],
+        "sessionName" : "Prototype 1 — Retake Block",
+        "id" : "96663d39-05f9-4109-9373-f973fe142e6e",
+        "capacity" : 3
+      }, {
+        "date" : "2026-02-10",
+        "slots" : [ {
+          "id" : "f8d78563-2305-4030-9ed4-9927d004e9f9:11:00",
+          "time" : "11:00",
+          "remaining" : 2
+        }, {
+          "id" : "f8d78563-2305-4030-9ed4-9927d004e9f9:11:15",
+          "time" : "11:15",
+          "remaining" : 3
+        }, {
+          "id" : "f8d78563-2305-4030-9ed4-9927d004e9f9:11:30",
+          "time" : "11:30",
+          "remaining" : 3
+        }, {
+          "id" : "f8d78563-2305-4030-9ed4-9927d004e9f9:11:45",
+          "time" : "11:45",
+          "remaining" : 3
+        } ],
+        "sessionName" : "Prototype 1 — Retake Block",
+        "id" : "f8d78563-2305-4030-9ed4-9927d004e9f9",
+        "capacity" : 3
+      } ],
+      "bookings" : [ {
+        "id" : "a9622d78-820b-40de-a621-b6bb999915d0",
+        "createdAt" : "2026-02-11T04:47:20.108635900Z",
+        "dept" : "cs",
+        "slotId" : "f8d78563-2305-4030-9ed4-9927d004e9f9:11:00",
+        "sessionId" : "f8d78563-2305-4030-9ed4-9927d004e9f9",
+        "sessionName" : "Prototype 1 — Retake Block",
+        "date" : "2026-02-10",
+        "time" : "11:00",
+        "name" : "Name",
+        "email" : "sc3908@desales.edu",
+        "studentId" : "3935",
+        "courseCode" : "eee",
+        "instructor" : "eeee",
+        "notes" : "agweg"
+      } ]
+    }
+  }
+}
