@@ -110,9 +110,8 @@ export default function DevDashboard() {
 
   const sessions = data?.sessions || [];
 
-  // Change these to your real routes:
   const adminHref = `/admin/${dept}`;
-  const studentHref = `/dept/${dept}`; // example (edit to match your real student route)
+  const studentHref = `/student/${dept}`; 
 
   return (
     <main className="dev-shell">
@@ -164,9 +163,9 @@ export default function DevDashboard() {
           Open Admin page
         </Link>
 
-        <a className="dev-btn dev-btnGhost" href={studentHref}>
+        <Link href={`/student/${dept}`} className="dev-btn dev-btnGhost">
           Open Student page
-        </a>
+        </Link>
 
         <span className="dev-msg">{msg}</span>
       </div>
@@ -320,7 +319,7 @@ export default function DevDashboard() {
                   Admin ({deptName})
                 </Link>
 
-                <Link href={`/dept/${dept}`} className="dev-btn dev-btnGhost">
+                <Link href={`/student/${dept}`} className="dev-btn dev-btnGhost">
                   Student View
                 </Link>
               </div>
