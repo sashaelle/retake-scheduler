@@ -5,9 +5,9 @@ import Link from "next/link";
 import BookingForm from "@/app/components/BookingForm";
 
 const DEPARTMENTS = [
-  { key: "cs", name: "Computer Science" },
-  { key: "math", name: "Mathematics" },
-  { key: "bio", name: "Biology" },
+  { key: "HS", name: "Homeland Security" },
+  { key: "CJ", name: "Criminal Justice" },
+  { key: "PS", name: "Psychology" },
 ];
 
 function toTimeLabel(t) {

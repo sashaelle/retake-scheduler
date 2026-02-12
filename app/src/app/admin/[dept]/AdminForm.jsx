@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 
 function toMinutes(t) {
@@ -114,7 +116,13 @@ export default function AdminForm({ dept }) {
 
         <label className="af-field">
           <span>Start time</span>
-          <input className="af-input" type="time" name="startTime" required />
+          <input
+            className="af-input"
+            type="time"
+            name="startTime"
+            step="900"
+            required
+          />
         </label>
 
         <label className="af-field">
