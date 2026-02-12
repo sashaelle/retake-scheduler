@@ -6,7 +6,9 @@ export async function GET(req) {
   const url = new URL(req.url);
   const dept = url.searchParams.get("dept") || "";
 
-  const r = await fetch(`${BACKEND}/data?dept=${encodeURIComponent(dept)}`);
+  const r = await fetch(`${BACKEND}/data?dept=${encodeURIComponent(dept)}`, {
+    cache: "no-store",
+  });
   const text = await r.text();
 
   return new NextResponse(text, {
@@ -16,12 +18,17 @@ export async function GET(req) {
 }
 
 export async function POST(req) {
-  const body = await req.text();
+  const url = new URL(req.url);
+  const dept = url.searchParams.get("dept") || "";
+
+  const incoming = await req.json();
+  const body = JSON.stringify({ ...incoming, dept }); // dept enforced here
 
   const r = await fetch(`${BACKEND}/data`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body,
+    cache: "no-store",
   });
 
   const text = await r.text();
