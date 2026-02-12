@@ -8,7 +8,7 @@ export default function BookingForm({ slot }) {
   async function onSubmit(e) {
     e.preventDefault();
 
-    const formEl = e.currentTarget; // ✅ capture immediately
+    const formEl = e.currentTarget;
 
     setMsg(null);
     setLoading(true);
@@ -42,7 +42,7 @@ export default function BookingForm({ slot }) {
     }
 
     setMsg("Booked! ✅");
-    formEl.reset(); // ✅ safe because we stored it
+    formEl.reset();
   }
 
   return (
@@ -54,8 +54,7 @@ export default function BookingForm({ slot }) {
 
       <div className="bf-summary">
         <div>
-          <span>Department:</span>{" "}
-          <strong>{slot.departmentName}</strong>
+          <span>Department:</span> <strong>{slot.departmentName}</strong>
         </div>
         <div>
           <span>When:</span>{" "}
@@ -64,8 +63,7 @@ export default function BookingForm({ slot }) {
           </strong>
         </div>
         <div>
-          <span>Where:</span>{" "}
-          <strong>{slot.locationLabel}</strong>
+          <span>Where:</span> <strong>{slot.locationLabel}</strong>
         </div>
       </div>
 
@@ -77,12 +75,7 @@ export default function BookingForm({ slot }) {
 
         <label className="bf-field">
           <span>Email *</span>
-          <input
-            name="email"
-            type="email"
-            required
-            autoComplete="email"
-          />
+          <input name="email" type="email" required autoComplete="email" />
         </label>
 
         <label className="bf-field">
@@ -90,25 +83,27 @@ export default function BookingForm({ slot }) {
           <input name="studentId" />
         </label>
 
+        <div></div>
+
         <label className="bf-field">
-          <span>
-            Course code {slot.requireCourseInfo ? "*" : "(optional)"}
-          </span>
+          <span>Course code {slot.requireCourseInfo ? "*" : "(optional)"}</span>
           <input
             name="courseCode"
-            placeholder="CS-360"
+            placeholder="CS-453"
             required={!!slot.requireCourseInfo}
           />
         </label>
 
         <label className="bf-field">
           <span>
-            Instructor {slot.requireCourseInfo ? "*" : "(optional)"}
+            Instructor Email {slot.requireCourseInfo ? "*" : "(optional)"}
           </span>
           <input
-            name="instructor"
-            placeholder="Prof. Shimkanon"
-            required={!!slot.requireCourseInfo}
+            name="instructorEmail"
+            placeholder="Pranshu.Gupta@desales.edu"
+            type="email"
+            required
+            autoComplete="email"
           />
         </label>
 
@@ -118,11 +113,7 @@ export default function BookingForm({ slot }) {
         </label>
       </div>
 
-      <button
-        className="bf-button"
-        disabled={loading}
-        type="submit"
-      >
+      <button className="bf-button" disabled={loading} type="submit">
         {loading ? "Booking..." : "Confirm booking"}
       </button>
 
