@@ -1,0 +1,19 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Java: Run backend (com.retake.App)",
+      "type": "java",
+      "request": "launch",
+      "mainClass": "com.retake.App",
+      "cwd": "${workspaceFolder}/backend"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Run: both (Next + Java)",
+      "configurations": ["Java: Run backend (com.retake.App)"],
+      "preLaunchTask": "Next: dev server"
+    }
+  ]
+}

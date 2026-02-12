@@ -1,0 +1,41 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Next: dev server",
+      "type": "shell",
+      "command": "npm run dev",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
+      "label": "Java: compile+deps",
+      "type": "shell",
+      "command": "mvn -DskipTests package dependency:copy-dependencies",
+      "options": {
+        "cwd": "${workspaceFolder}/backend"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Java: run",
+      "type": "shell",
+      "command": "java -cp 'target/classes;target/dependency/*' com.retake.App",
+      "options": {
+        "cwd": "${workspaceFolder}/backend"
+      },
+      "dependsOn": "Java: compile+deps",
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
+      "label": "Start: both servers",
+      "dependsOn": ["Next: dev server", "Java: run"],
+      "dependsOrder": "parallel",
+      "problemMatcher": []
+    }
+  ]
+}
