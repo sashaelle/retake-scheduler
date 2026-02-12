@@ -1,8 +1,9 @@
-# src\app
+# Frontend File Organization
+## src/app
 
 ---
 
-## admin\[dept]
+## admin/[dept]
 
 AdminForm.jsx
 
