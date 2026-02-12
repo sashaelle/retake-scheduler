@@ -1,6 +1,4 @@
-Title: Exam Retake Scheduler 
-
-Description: 
+# Exam Retake Scheduler 
 A URL-based, capacity-aware scheduling system for academic exam retakes. Admins create capacity-limited time slots and share a unique link for students to book without overbooking. 
 
 Planned Features (MVP): 
