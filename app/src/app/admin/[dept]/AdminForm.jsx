@@ -38,10 +38,10 @@ function buildTimeOptions(stepMinutes = 15, start = "09:00", end = "17:00") {
 export default function AdminForm({ dept }) {
   const [status, setStatus] = useState(null);
 
-  const deptKey = String(dept || "").toLowerCase();
+  const deptKey = String(dept || "");
   const deptName = DEPT_NAMES[deptKey] || dept;
 
-  const timeOptions = buildTimeOptions(15, "09:00", "11:00");
+  const timeOptions = buildTimeOptions(15, "09:00", "17:00");
 
   async function onSubmit(e) {
     e.preventDefault();
@@ -63,7 +63,7 @@ export default function AdminForm({ dept }) {
     }
 
     const examType = String(form.get("examType") || "MWF");
-    const step = examType === "MWF" ? 50 : 75;
+    const step = examType === "MWF" ? 60 : 75;
 
     const times = buildTimes(startTime, endTime, step);
 
@@ -159,7 +159,7 @@ export default function AdminForm({ dept }) {
           <select
             className="af-select"
             name="endTime"
-            defaultValue="17:00"
+            defaultValue="11:00"
             required
           >
             {timeOptions.map((t) => (
