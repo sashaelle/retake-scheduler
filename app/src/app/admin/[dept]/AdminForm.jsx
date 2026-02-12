@@ -3,9 +3,9 @@
 import { useState } from "react";
 
 const DEPT_NAMES = {
-  hs: "Homeland Security",
-  cj: "Criminal Justice",
-  ps: "Psychology",
+  HS: "Homeland Security",
+  CJ: "Criminal Justice",
+  PS: "Psychology",
 };
 
 function toMinutes(t) {
@@ -27,22 +27,61 @@ function buildTimes(startTime, endTime, step) {
   }
   return out;
 }
+function buildTimeOptions(stepMinutes = 15, start = "09:00", end = "17:00") {
+  const out = [];
+  for (let cur = toMinutes(start); cur <= toMinutes(end); cur += stepMinutes) {
+    out.push(toTime(cur));
+  }
+  return out;
+}
 
 export default function AdminForm({ dept }) {
   const [status, setStatus] = useState(null);
-  const deptName = DEPT_NAMES[dept] || dept;
+
+  const deptKey = String(dept || "").toLowerCase();
+  const deptName = DEPT_NAMES[deptKey] || dept;
+
+  const timeOptions = buildTimeOptions(15, "09:00", "11:00");
 
   async function onSubmit(e) {
     e.preventDefault();
 
-    const formEl = e.currentTarget; // grab it NOW
+    const formEl = e.currentTarget;
     setStatus({ type: "loading", msg: "Creating..." });
 
     const form = new FormData(formEl);
-    // ...build payload...
+
+    const sessionName = String(form.get("sessionName") || "").trim();
+    const date = String(form.get("date") || "");
+    const startTime = String(form.get("startTime") || "");
+    const endTime = String(form.get("endTime") || "");
+    const capacity = Number(form.get("capacity") || 1);
+
+    if (!sessionName || !date || !startTime || !endTime) {
+      setStatus({ type: "error", msg: "Missing required fields." });
+      return;
+    }
+
+    const examType = String(form.get("examType") || "MWF");
+    const step = examType === "MWF" ? 50 : 75;
+
+    const times = buildTimes(startTime, endTime, step);
+
+    if (times.length === 0) {
+      setStatus({ type: "error", msg: "End time must be after start time." });
+      return;
+    }
+
+    const payload = {
+      dept: deptKey,
+      sessionName,
+      date,
+      capacity,
+      times,
+    };
 
     try {
-      const res = await fetch(`/api/data?dept=${encodeURIComponent(dept)}`, {
+      const res = await fetch(`/api/data?dept=${encodeURIComponent(deptKey)}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -55,33 +94,11 @@ export default function AdminForm({ dept }) {
         type: "success",
         msg: `Created session with ${times.length} slots.`,
       });
-      formEl.reset(); // use the captured element
+      formEl.reset();
     } catch (err) {
       setStatus({
         type: "error",
         msg: `Create failed: ${String(err?.message ?? err).slice(0, 200)}`,
-      });
-    }
-
-    try {
-      const res = await fetch(`/api/data?dept=${encodeURIComponent(dept)}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      const text = await res.text();
-      if (!res.ok) throw new Error(text);
-
-      setStatus({
-        type: "success",
-        msg: `Created session with ${times.length} slots.`,
-      });
-      e.currentTarget.reset();
-    } catch (err) {
-      setStatus({
-        type: "error",
-        msg: `Create failed: ${String(err.message).slice(0, 200)}`,
       });
     }
   }
@@ -123,27 +140,41 @@ export default function AdminForm({ dept }) {
 
         <label className="af-field">
           <span>Start time</span>
-          <input
-            className="af-input"
-            type="time"
+          <select
+            className="af-select"
             name="startTime"
-            step="900"
+            defaultValue="09:00"
             required
-          />
+          >
+            {timeOptions.map((t) => (
+              <option key={t} value={t}>
+                {t}
+              </option>
+            ))}
+          </select>
         </label>
 
         <label className="af-field">
           <span>End time</span>
-          <input className="af-input" type="time" name="endTime" required />
+          <select
+            className="af-select"
+            name="endTime"
+            defaultValue="17:00"
+            required
+          >
+            {timeOptions.map((t) => (
+              <option key={t} value={t}>
+                {t}
+              </option>
+            ))}
+          </select>
         </label>
 
         <label className="af-field af-full">
-          <span>Slot length (minutes)</span>
-          <select className="af-select" name="slotMinutes" defaultValue="15">
-            <option value="10">10</option>
-            <option value="15">15</option>
-            <option value="20">20</option>
-            <option value="30">30</option>
+          <span>Exam Type</span>
+          <select className="af-select" name="ExamType" defaultValue="15">
+            <option value="MWF">MWF</option>
+            <option value="TTH">TTH</option>
           </select>
         </label>
       </div>
