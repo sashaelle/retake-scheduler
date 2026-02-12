@@ -9,7 +9,7 @@ export default async function AdminDeptPage({ params }) {
         <header className="admin-header">
           <h1 className="admin-title">Admin Dashboard</h1>
           <p className="admin-subtitle">
-            Department: <span className="admin-dept">{dept}</span>
+            Department: <span className="dept">{dept}</span>
           </p>
         </header>
 

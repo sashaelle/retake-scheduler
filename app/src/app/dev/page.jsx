@@ -15,7 +15,7 @@ function toTimeLabel(t) {
 }
 
 export default function DevDashboard() {
-  const [dept, setDept] = useState("cs");
+  const [dept, setDept] = useState("HS");
   const deptName = useMemo(
     () => DEPARTMENTS.find((d) => d.key === dept)?.name || dept,
     [dept],

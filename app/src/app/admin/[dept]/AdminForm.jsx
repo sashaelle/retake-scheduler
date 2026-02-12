@@ -2,6 +2,12 @@
 
 import { useState } from "react";
 
+const DEPT_NAMES = {
+  hs: "Homeland Security",
+  cj: "Criminal Justice",
+  ps: "Psychology",
+};
+
 function toMinutes(t) {
   const [h, m] = t.split(":").map(Number);
   return h * 60 + m;
@@ -24,6 +30,7 @@ function buildTimes(startTime, endTime, step) {
 
 export default function AdminForm({ dept }) {
   const [status, setStatus] = useState(null);
+  const deptName = DEPT_NAMES[dept] || dept;
 
   async function onSubmit(e) {
     e.preventDefault();
@@ -84,7 +91,7 @@ export default function AdminForm({ dept }) {
       <div className="af-grid">
         <label className="af-field">
           <span>Department</span>
-          <input className="af-input" value={dept} readOnly />
+          <input className="af-input" value={deptName} readOnly />
         </label>
 
         <label className="af-field">
