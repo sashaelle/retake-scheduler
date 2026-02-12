@@ -68,7 +68,7 @@ export default function DevDashboard() {
       sessionName: "Prototype 1 — Retake Block",
       date: `${yyyy}-${mm}-${dd}`,
       capacity: 3,
-      times: ["11:00", "11:15", "11:30", "11:45"],
+      times: ["11:00", "12:00", "1:00", "2:00"],
     };
 
     try {
@@ -226,7 +226,7 @@ export default function DevDashboard() {
 
       <div className="dev-grid">
         <section className="dev-card">
-          <h2 className="dev-h2">Slots ({deptName})</h2>
+          <h2 className="dev-h2">{deptName}</h2>
 
           {sessions.length === 0 ? (
             <p className="dev-muted">
