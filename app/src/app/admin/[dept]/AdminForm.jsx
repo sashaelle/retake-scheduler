@@ -1,154 +1,155 @@
-"use client";
+import { useState } from "react";
 
-import { useEffect, useState } from "react";
+function toMinutes(t) {
+  const [h, m] = t.split(":").map(Number);
+  return h * 60 + m;
+}
+function toTime(mins) {
+  const h = String(Math.floor(mins / 60)).padStart(2, "0");
+  const m = String(mins % 60).padStart(2, "0");
+  return `${h}:${m}`;
+}
+function buildTimes(startTime, endTime, step) {
+  const out = [];
+  let cur = toMinutes(startTime);
+  const end = toMinutes(endTime);
+  while (cur < end) {
+    out.push(toTime(cur));
+    cur += step;
+  }
+  return out;
+}
 
 export default function AdminForm({ dept }) {
-  const [sessionName, setSessionName] = useState("");
-  const [date, setDate] = useState("");
-  const [capacity, setCapacity] = useState(1);
-  const [times, setTimes] = useState("09:00, 09:15, 09:30");
+  const [status, setStatus] = useState(null);
 
-  const [sessions, setSessions] = useState([]);
-  const [status, setStatus] = useState("");
-
-  async function loadSessions() {
-    setStatus("Loading sessions...");
-    try {
-      const res = await fetch(`/api/data?dept=${encodeURIComponent(dept)}`);
-      const data = await res.json();
-      setSessions(data.sessions || []);
-      setStatus("");
-    } catch {
-      setStatus("Failed to load sessions.");
-    }
-  }
-
-  useEffect(() => {
-    loadSessions();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dept]);
-
-  async function handleSubmit(e) {
+  async function onSubmit(e) {
     e.preventDefault();
-    setStatus("Saving...");
 
-    const slotTimes = times
-      .split(",")
-      .map((t) => t.trim())
-      .filter(Boolean);
+    const formEl = e.currentTarget; // grab it NOW
+    setStatus({ type: "loading", msg: "Creating..." });
 
-    const payload = {
-      dept,
-      sessionName,
-      date,
-      capacity: Number(capacity),
-      times: slotTimes,
-    };
+    const form = new FormData(formEl);
+    // ...build payload...
 
     try {
-      const res = await fetch("/api/data", {
+      const res = await fetch(`/api/data?dept=${encodeURIComponent(dept)}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
 
-      const data = await res.json();
+      const text = await res.text();
+      if (!res.ok) throw new Error(text);
 
-      if (!res.ok) {
-        setStatus(`Error: ${data.error || "Unknown error"}`);
-        return;
-      }
+      setStatus({
+        type: "success",
+        msg: `Created session with ${times.length} slots.`,
+      });
+      formEl.reset(); // use the captured element
+    } catch (err) {
+      setStatus({
+        type: "error",
+        msg: `Create failed: ${String(err?.message ?? err).slice(0, 200)}`,
+      });
+    }
 
-      setStatus("Saved!");
-      setSessionName("");
-      // keep date/times/capacity as convenience, or clear if you want
+    try {
+      const res = await fetch(`/api/data?dept=${encodeURIComponent(dept)}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
 
-      // Reload from the JSON store so what you see is what’s persisted
-      await loadSessions();
-    } catch {
-      setStatus("Network/server error while saving.");
+      const text = await res.text();
+      if (!res.ok) throw new Error(text);
+
+      setStatus({
+        type: "success",
+        msg: `Created session with ${times.length} slots.`,
+      });
+      e.currentTarget.reset();
+    } catch (err) {
+      setStatus({
+        type: "error",
+        msg: `Create failed: ${String(err.message).slice(0, 200)}`,
+      });
     }
   }
 
   return (
-    <section style={{ marginTop: 16 }}>
-      <h2>Create a retake session</h2>
+    <form className="af-form" onSubmit={onSubmit}>
+      <div className="af-grid">
+        <label className="af-field">
+          <span>Department</span>
+          <input className="af-input" value={dept} readOnly />
+        </label>
 
-      <form onSubmit={handleSubmit} style={{ marginTop: 12 }}>
-        <div style={{ marginBottom: 10 }}>
-          <label>
-            Session name:
-            <input
-              value={sessionName}
-              onChange={(e) => setSessionName(e.target.value)}
-              placeholder="e.g., Calc 1 Retake"
-              style={{ marginLeft: 8 }}
-              required
-            />
-          </label>
-        </div>
+        <label className="af-field">
+          <span>Session name</span>
+          <input
+            className="af-input"
+            name="sessionName"
+            placeholder="e.g., Resume Reviews"
+            required
+          />
+        </label>
 
-        <div style={{ marginBottom: 10 }}>
-          <label>
-            Date:
-            <input
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              style={{ marginLeft: 8 }}
-              required
-            />
-          </label>
-        </div>
+        <label className="af-field">
+          <span>Date</span>
+          <input className="af-input" type="date" name="date" required />
+        </label>
 
-        <div style={{ marginBottom: 10 }}>
-          <label>
-            Capacity per slot:
-            <input
-              type="number"
-              min="1"
-              value={capacity}
-              onChange={(e) => setCapacity(e.target.value)}
-              style={{ marginLeft: 8, width: 70 }}
-              required
-            />
-          </label>
-        </div>
+        <label className="af-field">
+          <span>Capacity</span>
+          <input
+            className="af-input"
+            type="number"
+            name="capacity"
+            min="1"
+            defaultValue="1"
+            required
+          />
+        </label>
 
-        <div style={{ marginBottom: 10 }}>
-          <label>
-            Slot times (comma-separated):
-            <input
-              value={times}
-              onChange={(e) => setTimes(e.target.value)}
-              style={{ marginLeft: 8, width: 260 }}
-            />
-          </label>
-        </div>
+        <label className="af-field">
+          <span>Start time</span>
+          <input className="af-input" type="time" name="startTime" required />
+        </label>
 
-        <button type="submit">Create Session</button>
-        <span style={{ marginLeft: 10 }}>{status}</span>
-      </form>
+        <label className="af-field">
+          <span>End time</span>
+          <input className="af-input" type="time" name="endTime" required />
+        </label>
 
-      <hr style={{ margin: "16px 0" }} />
+        <label className="af-field af-full">
+          <span>Slot length (minutes)</span>
+          <select className="af-select" name="slotMinutes" defaultValue="15">
+            <option value="10">10</option>
+            <option value="15">15</option>
+            <option value="20">20</option>
+            <option value="30">30</option>
+          </select>
+        </label>
+      </div>
 
-      <h3>Saved sessions (from JSON store)</h3>
-      {sessions.length === 0 ? (
-        <p>No sessions yet.</p>
-      ) : (
-        sessions.map((s) => (
-          <div key={s.id} style={{ marginBottom: 12 }}>
-            <strong>{s.sessionName}</strong> — {s.date} — cap {s.capacity}
-            <ul>
-              {s.slots.map((slot) => (
-                <li key={slot.time}>
-                  {slot.time} — {slot.remaining} remaining
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))
-      )}
-    </section>
+      <div className="af-actions">
+        <button
+          className="dev-btn dev-btnPrimary"
+          type="submit"
+          disabled={status?.type === "loading"}
+        >
+          {status?.type === "loading" ? "Creating..." : "Create session"}
+        </button>
+        <button className="dev-btn dev-btnGhost" type="reset">
+          Reset
+        </button>
+        <p className="af-msg">
+          {status
+            ? status.msg
+            : "Creates a session and generates time slots automatically."}
+        </p>
+      </div>
+    </form>
   );
 }
