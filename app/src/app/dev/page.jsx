@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import BookingForm from "@/app/components/BookingForm";
 
 const DEPARTMENTS = [
@@ -71,7 +72,7 @@ export default function DevDashboard() {
     };
 
     try {
-      const r = await fetch("/api/data", {
+      const r = await fetch(`/api/data?dept=${encodeURIComponent(dept)}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -110,16 +111,13 @@ export default function DevDashboard() {
   const sessions = data?.sessions || [];
 
   // Change these to your real routes:
-  const adminHref = "/admin";
+  const adminHref = `/admin/${dept}`;
   const studentHref = `/dept/${dept}`; // example (edit to match your real student route)
 
   return (
     <main className="dev-shell">
       <h1 className="dev-title">Prototype 1 — Dev Dashboard</h1>
-      <p className="dev-subtitle">
-        Developer view (debug + quick navigation). Business logic handled by
-        Java backend.
-      </p>
+      <p className="dev-subtitle">Developer view (debug + quick navigation).</p>
 
       <div className="dev-toolbar">
         <label className="dev-field">
@@ -162,9 +160,9 @@ export default function DevDashboard() {
           {showJson ? "Hide JSON" : "Show JSON"}
         </button>
 
-        <a className="dev-btn dev-btnGhost" href={adminHref}>
+        <Link href={`/admin/${dept}`} className="dev-btn dev-btnGhost">
           Open Admin page
-        </a>
+        </Link>
 
         <a className="dev-btn dev-btnGhost" href={studentHref}>
           Open Student page
@@ -318,13 +316,13 @@ export default function DevDashboard() {
               <BookingForm slot={selected} />
 
               <div className="dev-actions">
-                <button
-                  onClick={load}
-                  disabled={loading}
-                  className="dev-btn dev-btnGhost"
-                >
-                  Refresh slots
-                </button>
+                <Link href={`/admin/${dept}`} className="dev-btn dev-btnGhost">
+                  Admin ({deptName})
+                </Link>
+
+                <Link href={`/dept/${dept}`} className="dev-btn dev-btnGhost">
+                  Student View
+                </Link>
               </div>
             </>
           )}
