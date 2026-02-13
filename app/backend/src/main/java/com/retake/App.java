@@ -12,16 +12,9 @@ import static spark.Spark.*;
 
 public class App {
 
-  // IMPORTANT:
-  // We read/write the same file you used in Next.js: process.cwd()/data/store.json
-  // When running from backend/, we set the path to ../data/store.json
   private static final Path STORE_PATH = Paths.get("..", "data", "store.json").normalize();
-
   private static final ObjectMapper mapper = new ObjectMapper();
 
-  // ------------ Data Structures (maps of maps) ------------
-  // Store shape:
-  // { "departments": { "cs": { "sessions": [ ... ], "bookings": [ ... ] }, ... } }
   private static Map<String, Object> readStore() {
     try {
       if (!Files.exists(STORE_PATH)) {
@@ -89,7 +82,6 @@ public class App {
     return fresh;
   }
 
-  // Ensure each slot has an id (backfill for old data)
   @SuppressWarnings("unchecked")
   private static void ensureSlotIds(List<Map<String, Object>> sessions) {
     for (Map<String, Object> session : sessions) {
@@ -108,7 +100,6 @@ public class App {
     }
   }
 
-  // ------------ Request parsing helpers ------------
   private static String cleanLower(String s) {
     if (s == null) return "";
     return s.trim().toLowerCase();
@@ -119,13 +110,9 @@ public class App {
     return s.trim();
   }
 
-  // ------------ Main ------------
   public static void main(String[] args) {
-    // Backend runs on 8081
     port(8081);
 
-    // Allow Next.js (localhost:3000) to call us directly if needed
-    // (If you proxy through Next routes, you can ignore CORS, but it doesn't hurt.)
     before((req, res) -> {
       res.header("Access-Control-Allow-Origin", "http://localhost:3000");
       res.header("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
@@ -142,7 +129,6 @@ public class App {
       return "{\"ok\":true}";
     });
 
-    // GET /data?dept=cs
     get("/data", (req, res) -> {
       res.type("application/json");
       String dept = cleanLower(req.queryParams("dept"));
@@ -160,8 +146,6 @@ public class App {
       return mapper.writeValueAsString(Map.of("dept", dept, "sessions", sessions));
     });
 
-    // POST /data
-    // Body: { dept, sessionName, date, capacity, times: ["09:00","09:15"] }
     post("/data", (req, res) -> {
       res.type("application/json");
 
@@ -176,6 +160,8 @@ public class App {
       String dept = cleanLower((String) body.get("dept"));
       String sessionName = clean((String) body.get("sessionName"));
       String date = clean((String) body.get("date"));
+      String startTime = clean((String) body.get("startTime"));
+      String endTime = clean((String) body.get("endTime"));
 
       int capacity = 0;
       Object capObj = body.get("capacity");
@@ -219,6 +205,8 @@ public class App {
       newSession.put("sessionName", sessionName);
       newSession.put("date", date);
       newSession.put("capacity", capacity);
+      newSession.put("startTime", startTime);
+      newSession.put("endTime", endTime);
       newSession.put("slots", slots);
 
       sessions.add(0, newSession);
@@ -233,8 +221,6 @@ public class App {
       return mapper.writeValueAsString(Map.of("ok", true, "created", newSession));
     });
 
-    // POST /bookings
-    // Body: { departmentSlug (or dept), slotId, name, email, studentId?, courseCode?, instructor?, notes? }
     post("/bookings", (req, res) -> {
       res.type("application/json");
 
@@ -268,7 +254,6 @@ public class App {
       Map<String, Object> foundSession = null;
       Map<String, Object> foundSlot = null;
 
-      // Find the slot
       for (Map<String, Object> session : sessions) {
         Object slotsObj = session.get("slots");
         if (!(slotsObj instanceof List)) continue;
@@ -303,10 +288,8 @@ public class App {
         return mapper.writeValueAsString(Map.of("error", "Slot is full"));
       }
 
-      // decrement
       foundSlot.put("remaining", remaining - 1);
 
-      // record booking
       List<Map<String, Object>> bookings = getBookings(deptData);
 
       Map<String, Object> booking = new LinkedHashMap<>();
@@ -321,7 +304,6 @@ public class App {
       booking.put("name", name);
       booking.put("email", email);
 
-      // optional fields
       booking.put("studentId", clean((String) body.get("studentId")));
       booking.put("courseCode", clean((String) body.get("courseCode")));
       booking.put("instructor", clean((String) body.get("instructor")));

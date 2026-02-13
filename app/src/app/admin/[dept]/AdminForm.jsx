@@ -17,7 +17,7 @@ function toTime(mins) {
   const m = String(mins % 60).padStart(2, "0");
   return `${h}:${m}`;
 }
-function buildTimes(startTime, endTime, step) {
+function buildTimes(startTime, endTime, step = 15) {
   const out = [];
   let cur = toMinutes(startTime);
   const end = toMinutes(endTime);
@@ -38,8 +38,8 @@ function buildTimeOptions(stepMinutes = 15, start = "09:00", end = "17:00") {
 export default function AdminForm({ dept }) {
   const [status, setStatus] = useState(null);
 
-  const deptKey = String(dept || "");
-  const deptName = DEPT_NAMES[deptKey] || dept;
+  const deptKey = String(dept || "").toUpperCase().trim();
+  const deptName = DEPT_NAMES[deptKey] || deptKey;
 
   const timeOptions = buildTimeOptions(15, "09:00", "17:00");
 
@@ -62,10 +62,7 @@ export default function AdminForm({ dept }) {
       return;
     }
 
-    const examType = String(form.get("examType") || "MWF");
-    const step = examType === "MWF" ? 60 : 75;
-
-    const times = buildTimes(startTime, endTime, step);
+    const times = buildTimes(startTime, endTime, 15);
 
     if (times.length === 0) {
       setStatus({ type: "error", msg: "End time must be after start time." });
@@ -78,6 +75,8 @@ export default function AdminForm({ dept }) {
       date,
       capacity,
       times,
+      startTime,
+      endTime,
     };
 
     try {
@@ -167,14 +166,6 @@ export default function AdminForm({ dept }) {
                 {t}
               </option>
             ))}
-          </select>
-        </label>
-
-        <label className="af-field af-full">
-          <span>Exam Type</span>
-          <select className="af-select" name="ExamType" defaultValue="15">
-            <option value="MWF">MWF</option>
-            <option value="TTH">TTH</option>
           </select>
         </label>
       </div>

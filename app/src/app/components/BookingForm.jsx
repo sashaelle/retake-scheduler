@@ -3,6 +3,7 @@ import { useState } from "react";
 
 export default function BookingForm({ slot }) {
   const [loading, setLoading] = useState(false);
+  const [examType, setExamType] = useState("MWF");
   const [msg, setMsg] = useState(null);
 
   async function onSubmit(e) {
@@ -22,7 +23,7 @@ export default function BookingForm({ slot }) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          ...payload,
+          ...payload, examType, 
           slotId: slot.slotId,
           departmentSlug: slot.departmentSlug,
         }),
@@ -84,6 +85,32 @@ export default function BookingForm({ slot }) {
         </label>
 
         <div></div>
+        <div className="bf-field bf-notes">
+          <span>Exam Type *</span>
+          <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
+            <label style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <input
+                type="radio"
+                name="examType"
+                value="MWF"
+                checked={examType === "MWF"}
+                onChange={(e) => setExamType(e.target.value)}
+              />
+              MWF (50 min)
+            </label>
+
+            <label style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <input
+                type="radio"
+                name="examType"
+                value="TTH"
+                checked={examType === "TTH"}
+                onChange={(e) => setExamType(e.target.value)}
+              />
+              TTH (75 min)
+            </label>
+          </div>
+        </div>
 
         <label className="bf-field">
           <span>Course code {slot.requireCourseInfo ? "*" : "(optional)"}</span>
