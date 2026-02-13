@@ -4,53 +4,22 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import BookingForm from "@/app/components/BookingForm";
 
-const DEPT_NAMES = {
-  HS: "Homeland Security",
-  CJ: "Criminal Justice",
-  PS: "Psychology",
-};
+const DEPARTMENTS = [
+  { key: "HS", name: "Homeland Security" },
+  { key: "CJ", name: "Criminal Justice" },
+  { key: "PS", name: "Psychology" },
+];
+
 function toTimeLabel(t) {
   return t;
 }
 
-function timeToMinutes(t) {
-  const [hStr, mStr] = String(t).split(":");
-  const h = Number(hStr);
-  const m = Number(mStr ?? 0);
-  return h * 60 + m;
-}
-
-function minutesTo12h(mins) {
-  let h24 = Math.floor(mins / 60) % 24;
-  const m = mins % 60;
-
-  const ampm = h24 >= 12 ? "PM" : "AM";
-  let h12 = h24 % 12;
-  if (h12 === 0) h12 = 12;
-
-  return `${h12}:${String(m).padStart(2, "0")} ${ampm}`;
-}
-
-function sessionRange12h(slots = []) {
-  const mins = (slots || [])
-    .map((s) => s?.time)
-    .filter(Boolean)
-    .map(timeToMinutes)
-    .sort((a, b) => a - b);
-
-  if (mins.length === 0) return null;
-
-  const step = mins.length >= 2 ? Math.max(1, mins[1] - mins[0]) : 15;
-
-  const start = mins[0];
-  const end = mins[mins.length - 1] + step;
-
-  return { start: minutesTo12h(start), end: minutesTo12h(end) };
-}
-
 export default function DevDashboard() {
-  const deptKey = String(dept || "");
-  const deptName = DEPT_NAMES[deptKey] || deptKey;
+  const [dept, setDept] = useState("HS");
+  const deptName = useMemo(
+    () => DEPARTMENTS.find((d) => d.key === dept)?.name || dept,
+    [dept],
+  );
 
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState("");
@@ -99,7 +68,7 @@ export default function DevDashboard() {
       sessionName: "Prototype 1 — Retake Block",
       date: `${yyyy}-${mm}-${dd}`,
       capacity: 3,
-      times: ["11:00", "12:00", "13:00", "14:00"],
+      times: ["11:00", "12:00", "1:00", "2:00"],
     };
 
     try {
@@ -264,65 +233,58 @@ export default function DevDashboard() {
             </p>
           ) : (
             <div className="dev-stack">
-              {sessions.map((s) => {
-                const range = sessionRange12h(s.slots || []);
-
-                return (
-                  <div key={s.id} className="dev-session">
-                    <div className="dev-sessionHeader">
-                      <div>
-                        <div className="dev-sessionTitle">{s.sessionName}</div>
-                        <div className="dev-sessionMeta">
-                          {s.date}
-                          {s.startTime && s.endTime ? ` • ${s.startTime}–${s.endTime}` : ""}
-                        </div>
-                      </div>
-                      <div className="dev-sessionMeta">
-                        capacity: <strong>{s.capacity}</strong>
-                      </div>
+              {sessions.map((s) => (
+                <div key={s.id} className="dev-session">
+                  <div className="dev-sessionHeader">
+                    <div>
+                      <div className="dev-sessionTitle">{s.sessionName}</div>
+                      <div className="dev-sessionMeta">{s.date}</div>
                     </div>
-
-                    <div className="dev-slots">
-                      {(s.slots || []).map((slot) => {
-                        const remaining = Number(slot.remaining ?? 0);
-                        const disabled = remaining <= 0;
-
-                        const slotForForm = {
-                          slotId: slot.id,
-                          departmentSlug: dept,
-                          departmentName: deptName,
-                          dateLabel: s.date,
-                          timeLabel: toTimeLabel(slot.time),
-                          locationLabel: "TBD (Prototype 1)",
-                          requireCourseInfo: true,
-                        };
-
-                        return (
-                          <div key={slot.id} className="dev-slotCard">
-                            <div className="dev-slotTop">
-                              <strong>{toTimeLabel(slot.time)}</strong>
-                              <span className="dev-slotMeta">
-                                remaining: <strong>{remaining}</strong>
-                              </span>
-                            </div>
-
-                            <button
-                              onClick={() => setSelected(slotForForm)}
-                              disabled={disabled}
-                              className={
-                                "dev-btn dev-btnPrimary " +
-                                (disabled ? "dev-btnDisabled" : "")
-                              }
-                            >
-                              {disabled ? "Full" : "Book this slot"}
-                            </button>
-                          </div>
-                        );
-                      })}
+                    <div className="dev-sessionMeta">
+                      capacity: <strong>{s.capacity}</strong>
                     </div>
                   </div>
-                );
-              })}
+
+                  <div className="dev-slots">
+                    {(s.slots || []).map((slot) => {
+                      const remaining = Number(slot.remaining ?? 0);
+                      const disabled = remaining <= 0;
+
+                      const slotForForm = {
+                        slotId: slot.id,
+                        departmentSlug: dept,
+                        departmentName: deptName,
+                        dateLabel: s.date,
+                        timeLabel: toTimeLabel(slot.time),
+                        locationLabel: "TBD (Prototype 1)",
+                        requireCourseInfo: true,
+                      };
+
+                      return (
+                        <div key={slot.id} className="dev-slotCard">
+                          <div className="dev-slotTop">
+                            <strong>{slot.time}</strong>
+                            <span className="dev-slotMeta">
+                              remaining: <strong>{remaining}</strong>
+                            </span>
+                          </div>
+
+                          <button
+                            onClick={() => setSelected(slotForForm)}
+                            disabled={disabled}
+                            className={
+                              "dev-btn dev-btnPrimary " +
+                              (disabled ? "dev-btnDisabled" : "")
+                            }
+                          >
+                            {disabled ? "Full" : "Book this slot"}
+                          </button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
             </div>
           )}
         </section>
@@ -339,7 +301,7 @@ export default function DevDashboard() {
               <div className="dev-selectedRow">
                 <div className="dev-selectedText">
                   Selected: <strong>{selected.dateLabel}</strong> •{" "}
-                  <strong>{toTimeLabel(selected.timeLabel)}</strong>
+                  <strong>{selected.timeLabel}</strong>
                 </div>
 
                 <button
